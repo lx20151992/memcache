@@ -1,4 +1,4 @@
-# simple memcache implementation
+# Simple memcache implementation
 
 A server that implements the Memcache Binary Protocol for the Get and Set methods.
 
