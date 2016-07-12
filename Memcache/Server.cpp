@@ -1,10 +1,7 @@
-//
-//  Server.cpp
-//  Memcache
-//
-//  Created by Ying Wang on 09/07/16.
-//  Copyright © 2016 Ying. All rights reserved.
-//
+/*
+ Part of the code is from Beej's Guide to Network Programming
+ http://beej.us/guide/bgnet/output/html/singlepage/bgnet.html
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
