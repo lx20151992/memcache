@@ -14,7 +14,7 @@ Thread pool and mutex is used to handle concurrency issues with multiple simulta
    - and / or have a number of copies of the cache, each writer thread write simultaneously. Server merges conflicts(if any) afterwards.
 
 ###Future work
-* A smart caching algorithm can be implemented to make the caching more effcient.
+* Design and implement a data structure for Least Recently Used (LRU) cache.
 * Use memory pool to avoid potential memory fragmentation.
 * Make the memcache server distributed.
 
