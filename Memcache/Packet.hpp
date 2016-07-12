@@ -31,7 +31,7 @@ struct Header
     uint16_t keyLength;
     uint8_t extrasLength;
     uint8_t dataType;
-    uint16_t reserved;
+    uint16_t status;
     uint32_t totalBodyLength;
     uint32_t opaque;
     uint64_t cas;
