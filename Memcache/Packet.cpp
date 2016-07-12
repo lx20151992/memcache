@@ -8,6 +8,8 @@
 
 #include "Packet.hpp"
 
+namespace Memcache {
+
 Response::Response(COMMAND opcode)
 {
     retBufferSize = HEADER_LENGTH;
@@ -41,7 +43,7 @@ Response::Response(COMMAND opcode, std::string extra, std::string value)
         retBuffer[1] = 0x01;
     }
     retBuffer[4] = 4; //extra.size();
-    int vs = 4 + value.size();
+    int vs = 4 + static_cast<int>(value.size());
     if (vs == 0)
     {
         retBuffer[7] = 0x01;
@@ -103,4 +105,6 @@ Request::Request(unsigned char data[], int len)
         }
         valueString = std::string(payload->value.begin(), payload->value.end());
     }
+}
+
 }

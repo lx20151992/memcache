@@ -13,6 +13,8 @@
 #include <arpa/inet.h>
 #include <vector>
 
+namespace Memcache {
+
 typedef std::vector<uint8_t> PayloadData;
 static const int HEADER_LENGTH = 24;
 
@@ -77,5 +79,7 @@ public:
     int BufferSize() const { return retBufferSize; };
     ~Response();
 };
+
+}
 
 #endif /* Packet_hpp */

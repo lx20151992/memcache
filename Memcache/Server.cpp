@@ -18,6 +18,8 @@
 #include "ThreadPool.h"
 #include "Server.hpp"
 
+namespace Memcache {
+
 static const char *PORT = "11211";  // the port users will be connecting to
 static const int BACKLOG = 10;	 // how many pending connections queue will hold
 
@@ -41,14 +43,14 @@ void *get_in_addr(struct sockaddr *sa)
     return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }
 
-void Server::handleRequest(unsigned char bufIn[], int bytesIn, unsigned char bufOut[], int& bytesOut, int i)
+void Server::handleRequest(unsigned char bufIn[], int bytesIn, unsigned char bufOut[], int& bytesOut, int fd)
 {
     Request* packetIn = new Request(bufIn, bytesIn);
     Response* packetOut;
     cache->Instance()->HandleRequest(packetIn, packetOut);
     bytesOut = packetOut->BufferSize();
     memcpy(bufOut, packetOut->Buffer(), bytesOut);
-    if (send(i, bufOut, bytesOut, 0) == -1)
+    if (send(fd, bufOut, bytesOut, 0) == -1)
     {
         perror("send");
     }
@@ -206,4 +208,6 @@ int Server::mainLoop()
     }
     
     return 0;
+}
+
 }

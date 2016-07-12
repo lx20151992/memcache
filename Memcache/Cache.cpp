@@ -8,6 +8,8 @@
 
 #include "Cache.hpp"
 
+namespace Memcache {
+
 Cache* Cache::instance = 0;
 
 Cache* Cache::Instance()
@@ -40,4 +42,6 @@ bool Cache::HandleRequest(Request* in, Response*& out)
 Cache::~Cache()
 {
     delete instance;
+}
+
 }

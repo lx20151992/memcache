@@ -9,6 +9,6 @@
 #include "Server.hpp"
 
 int main(int argc, const char * argv[]) {
-    Server().mainLoop();
+    Memcache::Server().mainLoop();
     return 0;
 }

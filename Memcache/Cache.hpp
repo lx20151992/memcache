@@ -15,6 +15,8 @@
 #include <mutex>
 #include "Packet.hpp"
 
+namespace Memcache {
+
 typedef std::unordered_map<std::string, std::string> CacheHT;
 
 class Cache
@@ -29,5 +31,7 @@ public:
     bool HandleRequest(Request* in, Response*& out);
     ~Cache();
 };
+  
+}
 
 #endif /* Cache_hpp */

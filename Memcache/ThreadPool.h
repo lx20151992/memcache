@@ -36,6 +36,8 @@ distribution.
 #include <functional>
 #include <stdexcept>
 
+namespace Memcache {
+
 class ThreadPool {
 private:
     // need to keep track of threads so we can join them
@@ -110,6 +112,8 @@ inline ThreadPool::~ThreadPool()
     condition.notify_all();
     for(std::thread &worker: workers)
         worker.join();
+}
+
 }
 
 #endif /* ThreadPool_h */
