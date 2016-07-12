@@ -2,8 +2,6 @@
 
 A server that implements the Memcache Binary Protocol for the Get and Set methods.
 
-
-
 ==
 ###Server
 1. Command line
