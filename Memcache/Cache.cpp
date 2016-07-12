@@ -21,20 +21,20 @@ Cache* Cache::Instance()
     return instance;
 }
 
-bool Cache::HandleRequest(Request* in, Response*& out)
+bool Cache::HandleRequest(Request* request, Response*& response)
 {
-    if (in->Command() == COMMAND::GET)
+    if (request->Command() == COMMAND::GET)
     {
-        std::cout << "GET" << std::endl;
-        out = new Response(in->Command(), in->ExtraString(), cacheHt[in->KeyString()]);
+        std::cout << "GET " << request->KeyString() << " - " << cacheHt[request->KeyString()] << std::endl;
+        response = new Response(request->Command(), request->ExtraString(), cacheHt[request->KeyString()]);
     }
-    else if (in->Command() == COMMAND::SET)
+    else if (request->Command() == COMMAND::SET)
     {
-        std::cout << "SET" << std::endl;
+        std::cout << "SET " << request->KeyString() << " - " << request->ValueString() << std::endl;
         cacheMutex.lock();
-        cacheHt[in->KeyString()] = in->ValueString();
+        cacheHt[request->KeyString()] = request->ValueString();
         cacheMutex.unlock();
-        out = new Response(in->Command());
+        response = new Response(request->Command(), request->ExtraString(), cacheHt[request->KeyString()]);
     }
     return true;
 }

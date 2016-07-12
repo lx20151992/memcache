@@ -10,70 +10,78 @@
 
 namespace Memcache {
 
-Response::Response(COMMAND opcode)
+void Response::WriteBuffer()
 {
-    retBufferSize = HEADER_LENGTH;
-    retBuffer = new unsigned char[HEADER_LENGTH];
-    memset(retBuffer, 0, HEADER_LENGTH);
-    retBuffer[0] = 0x81;
-    if (opcode == COMMAND::GET)
+    bufferSize = HEADER_LENGTH + header->totalBodyLength;
+    buffer = new unsigned char[bufferSize];
+    memset(buffer, 0, bufferSize * sizeof(unsigned char));
+    buffer[0] = header->magic;
+    buffer[1] = header->opcode;
+    buffer[4] = header->extrasLength;
+  
+    int tbl = header->totalBodyLength;
+    for (int i = 11; i >= 8; i--)
     {
-        retBuffer[1] = 0x00;
+        buffer[i] = tbl % 256;
+        tbl /= 256;
     }
-    else if (opcode == COMMAND::SET)
+  
+    if (header->opcode == COMMAND::GET)
     {
-        retBuffer[1] = 0x01;
+        std::copy(payload->value.begin(), payload->value.end(), buffer + HEADER_LENGTH + header->extrasLength + header->keyLength);
     }
+
+    std::cout << std::dec << bufferSize << std::endl;
+    for (int i = 0; i < bufferSize; i++)
+    {
+        if (i < 28)
+            std::cout << std::hex << unsigned(buffer[i]) << " ";
+        else
+            std::cout << (buffer[i]);
+    }
+    std::cout << std::endl;
+    std::cout << std::endl;
 }
 
 Response::Response(COMMAND opcode, std::string extra, std::string value)
 {
     header = new Header();
-    header->totalBodyLength = static_cast<int>(4 + value.size());
-    retBufferSize = HEADER_LENGTH + header->totalBodyLength;
-    retBuffer = new unsigned char[HEADER_LENGTH + header->totalBodyLength];
-    memset(retBuffer, 0, HEADER_LENGTH + 4);
-    retBuffer[0] = 0x81;
+    payload = new Payload();
+    header->magic = 0x81;
     if (opcode == COMMAND::GET)
     {
-        retBuffer[1] = 0x00;
+        header->opcode = 0x00;
+        header->extrasLength = 4;
+        header->keyLength = 0;
+        header->totalBodyLength = static_cast<int>(header->extrasLength + header->keyLength + value.size());
+        std::copy(value.begin(), value.end(), std::back_inserter(payload->value));
     }
     else if (opcode == COMMAND::SET)
     {
-        retBuffer[1] = 0x01;
+        header->opcode = 0x01;
+        header->extrasLength = 0;
+        header->keyLength = 0;
+        header->totalBodyLength = 0;
     }
-    retBuffer[4] = 4; //extra.size();
-    int vs = 4 + static_cast<int>(value.size());
-    if (vs == 0)
-    {
-        retBuffer[7] = 0x01;
-        return;
-    }
-    for (int i = 11; i >= 8; i--)
-    {
-        retBuffer[i] = vs % 256;
-        vs /= 256;
-    }
-    const uint8_t* p = reinterpret_cast<const uint8_t*>(value.c_str());
-    memcpy(retBuffer + HEADER_LENGTH + 4, p, value.size());
+    WriteBuffer();
 }
 
 Response::~Response()
 {
-    delete retBuffer;
-    retBuffer = NULL;
+    delete buffer;
+    buffer = NULL;
 }
 
 Request::Request(unsigned char data[], int len)
 {
     if (len < HEADER_LENGTH) return;
     header = reinterpret_cast<Header*>(data);
+    header->keyLength = data[2] * 256 + data[3];
+    payload = new Payload();
     // GET Request
-    if (header->opcode == 0x00)
+    if (header->opcode == COMMAND::GET)
     {
         command = COMMAND::GET;
-        header->keyLength = data[2] * 256 + data[3];
-        payload = new Payload();
         for (int i = HEADER_LENGTH; i < HEADER_LENGTH + header->keyLength; i++)
         {
             payload->key.push_back(data[i]);
@@ -81,11 +89,9 @@ Request::Request(unsigned char data[], int len)
         keyString = std::string(payload->key.begin(), payload->key.end());
     }
     // SET Request
-    else if (header->opcode == 0x01)
+    else if (header->opcode == COMMAND::SET)
     {
         command = COMMAND::SET;
-        header->keyLength = data[2] * 256 + data[3];
-        payload = new Payload();
         for (int i = HEADER_LENGTH; i < (HEADER_LENGTH + header->extrasLength); i++)
         {
             payload->specificExtras.push_back(data[i]);
