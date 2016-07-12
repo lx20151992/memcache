@@ -18,7 +18,9 @@ void Response::WriteBuffer()
     buffer[0] = header->magic;
     buffer[1] = header->opcode;
     buffer[4] = header->extrasLength;
-  
+    buffer[6] = header->status / 256;
+    buffer[7] = header->status % 256;
+
     int tbl = header->totalBodyLength;
     for (int i = 11; i >= 8; i--)
     {
@@ -48,6 +50,7 @@ Response::Response(COMMAND opcode, std::string extra, std::string value)
     header = new Header();
     payload = new Payload();
     header->magic = 0x81;
+    header->status = 0x0000;
     if (opcode == COMMAND::GET)
     {
         header->opcode = 0x00;
@@ -55,6 +58,10 @@ Response::Response(COMMAND opcode, std::string extra, std::string value)
         header->keyLength = 0;
         header->totalBodyLength = static_cast<int>(header->extrasLength + header->keyLength + value.size());
         std::copy(value.begin(), value.end(), std::back_inserter(payload->value));
+        if (payload->value.size() == 0)
+        {
+            header->status = 0x0001;
+        }
     }
     else if (opcode == COMMAND::SET)
     {
