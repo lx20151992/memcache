@@ -5,14 +5,18 @@ A server that implements the Memcache Binary Protocol for the Get and Set method
 Thread pool and mutex is used to handle concurrency issues with multiple simultaneous writers and readers.
 
 ###Limitations
-The cache is implemented use a naive hashset. It does not take care of expiry time.
+* The cache is implemented use a simple STL hashset and assume all keys & values are string type. The data structure of the cache can be better designed to store and retrive different data types more efficient.
+* This server implementation does not take care of expiry time. 
 
 ###Performance tradeoffs
+* Implemented Cache as a singleton, and used mutex to prevent potential concurrency issues. However this makes the write to cache part become bottle neck, writer threads may need to wait for writting to the cache. Possible optimization, 
+   - divide cache into a number of smaller parts, so a writer thread only lock a small part of the cache
+   - and / or have a number of copies of the cache, each writer thread write simultaneously. Server merges conflicts(if any) afterwards.
 
 ###Future work
 * A smart caching algorithm can be implemented to make the caching more effcient.
-* Memory pool to avoid potential memory fragmentation.
-
+* Use memory pool to avoid potential memory fragmentation.
+* Make the memcache server distributed.
 
 ==
 ###Server
