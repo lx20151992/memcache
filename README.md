@@ -34,7 +34,6 @@ The cache is implemented use a naive hashset. It does not take care of expiry ti
 
 ==
 ###Client
-=
 Prerequisite
 
 Install [python-binary-memcached](https://github.com/jaysonsantos/python-binary-memcached)
