@@ -50,9 +50,9 @@ protected:
     Header* header;
     Payload* payload;
     COMMAND command;
-    std::string keyString;
-    std::string valueString;
-    std::string extraString;
+    std::string keyString = "";
+    std::string valueString = "";
+    std::string extraString = "";
     
 public:
     COMMAND Command() const { return command; }
@@ -70,13 +70,13 @@ public:
 class Response : public Packet
 {
 private:
-    unsigned char* retBuffer;
-    int retBufferSize;
+    unsigned char* buffer;
+    int bufferSize;
 public:
-    Response(COMMAND opcode);
     Response(COMMAND opcode, std::string extra, std::string value);
-    unsigned char* Buffer() const { return retBuffer; };
-    int BufferSize() const { return retBufferSize; };
+    unsigned char* Buffer() const { return buffer;} ;
+    void WriteBuffer();
+    int BufferSize() const { return bufferSize; };
     ~Response();
 };
 
