@@ -14,6 +14,7 @@ The cache is implemented use a naive hashset. It does not take care of expiry ti
 * Memory pool to avoid potential memory fragmentation.
 
 ####Server
+------
 1. Command line
 
   Build:
@@ -31,6 +32,7 @@ The cache is implemented use a naive hashset. It does not take care of expiry ti
   Xcode project files are included.
 
 ####Client
+------
 Prerequisite
 
 Install [python-binary-memcached](https://github.com/jaysonsantos/python-binary-memcached)
